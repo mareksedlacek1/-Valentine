@@ -185,9 +185,6 @@
     function setNoBtnPosition() {
       // Move No button anywhere in the visible window, avoiding the Yes button at the bottom center
       const padding = 10;
-      // Use the .container as the frame of reference
-      const container = document.querySelector('.container');
-      const contRect = container.getBoundingClientRect();
       // Temporarily set to (0,0) to get correct size
       noBtn.style.left = '0px';
       noBtn.style.top = '0px';
@@ -202,7 +199,7 @@
       let tries = 0;
       do {
         left = Math.random() * maxLeft;
-        top = Math.random() * (maxTop - 60); // 60px buffer for bottom elements
+        top = Math.random() * maxTop;
         // Avoid overlap with Yes button (bottom center)
         const noBtnArea = {
           left: left,
@@ -226,7 +223,7 @@
       } while (tries < 20);
       // Clamp to window
       left = Math.max(padding, Math.min(left, winWidth - btnRect.width - padding));
-      top = Math.max(padding, Math.min(top, winHeight - btnRect.height - padding - 60));
+      top = Math.max(padding, Math.min(top, winHeight - btnRect.height - padding));
       noBtn.style.left = left + 'px';
       noBtn.style.top = top + 'px';
     }
@@ -239,7 +236,7 @@
     // No button moves only on timer, not on hover or click
 
     // Move No button every 10 seconds automatically
-    setInterval(setNoBtnPosition, 1000);
+    setInterval(setNoBtnPosition, 600);
 
     // Show custom popup
     function showPopup(message, emoji) {
