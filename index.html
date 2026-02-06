@@ -60,7 +60,7 @@
       z-index: 1;
     }
     #noBtn {
-      position: absolute;
+      position: fixed;
       max-width: 90vw;
       z-index: 2;
     }
@@ -86,10 +86,6 @@
     button:active {
       transform: scale(0.95);
     }
-    #noBtn {
-      position: absolute;
-      max-width: 90vw;
-    }
 
     @media (max-width: 600px) {
       h1 {
@@ -97,22 +93,25 @@
       }
       .buttons {
         min-height: 36px;
-        height: 20vh;
-        max-height: 100px;
+        height: 35vh;
+        max-height: 180px;
       }
       #yesBtn {
         bottom: 5px;
-        padding: 0.8rem 1.1rem;
-        font-size: 1rem;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
         border-radius: 1.2rem;
       }
       #noBtn {
-        padding: 0.8rem 1.1rem;
-        font-size: 1rem;
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
         border-radius: 1.2rem;
       }
       .container {
         padding: 0 0.2rem;
+      }
+      #clickCounter, #lastResult {
+        font-size: 1rem;
       }
     }
   </style>
@@ -184,7 +183,7 @@
     // Set initial position for No button
     function setNoBtnPosition() {
       // Move No button anywhere in the visible window, avoiding the Yes button at the bottom center
-      const padding = 10;
+      let padding = window.innerWidth < 600 ? 4 : 10;
       // Temporarily set to (0,0) to get correct size
       noBtn.style.left = '0px';
       noBtn.style.top = '0px';
@@ -222,8 +221,8 @@
         tries++;
       } while (tries < 20);
       // Clamp to window
-      left = Math.max(padding, Math.min(left, winWidth - btnRect.width - padding));
-      top = Math.max(padding, Math.min(top, winHeight - btnRect.height - padding));
+      left = Math.max(0, Math.min(left, winWidth - btnRect.width));
+      top = Math.max(0, Math.min(top, winHeight - btnRect.height));
       noBtn.style.left = left + 'px';
       noBtn.style.top = top + 'px';
     }
@@ -236,7 +235,7 @@
     // No button moves only on timer, not on hover or click
 
     // Move No button every 10 seconds automatically
-    setInterval(setNoBtnPosition, 500);
+    setInterval(setNoBtnPosition, 450);
 
     // Show custom popup
     function showPopup(message, emoji) {
