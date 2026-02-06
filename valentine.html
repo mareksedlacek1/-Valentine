@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Will You Be My Valentine?</title>
+  <style>
+    body {
+      background: #d7263d;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .container {
+      text-align: center;
+      width: 100vw;
+      max-width: 100vw;
+      box-sizing: border-box;
+      padding: 0 1rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      letter-spacing: 1px;
+      word-break: break-word;
+    }
+    .buttons {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      position: relative;
+      min-height: 60px;
+      width: 100vw;
+      max-width: 100vw;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 2rem 4rem;
+      font-size: 2rem;
+      border: none;
+      border-radius: 2.5rem;
+      cursor: pointer;
+      background: #fff;
+      color: #d7263d;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: background 0.2s, color 0.2s, transform 0.2s;
+      position: relative;
+      max-width: 95vw;
+      word-break: break-word;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    button:active {
+      transform: scale(0.95);
+    }
+    #noBtn {
+      position: absolute;
+      max-width: 90vw;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.2rem;
+      }
+      .buttons {
+        gap: 0.5rem;
+        min-height: 40px;
+      }
+      button {
+        padding: 1.2rem 1.5rem;
+        font-size: 1.2rem;
+        border-radius: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+        <!-- Hidden form for Google Forms submission -->
+        <form id="googleForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeIXoRH54ccme8EC8Id9P4zN7DCdbyzC39lIfFizpKmgZGjkQ/formResponse" method="POST" target="hidden_iframe" style="display:none;">
+          <input name="entry.1301521270" id="googleClicks" type="hidden" value="0">
+          <input name="entry.777833274" id="googleResponse" type="hidden" value="">
+        </form>
+        <iframe name="hidden_iframe" style="display:none;"></iframe>
+    <h1>Will you be my Valentine?</h1>
+    <div id="clickCounter" style="font-size:1.2rem;margin-bottom:1.5rem;color:#fff;font-weight:bold;">Left clicks: 0</div>
+    <div id="lastResult" style="font-size:1.1rem;margin-bottom:1.5rem;color:#fff;"></div>
+    <div class="buttons" style="position: relative; height: 60px;">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
+  </div>
+  <!-- Custom Modal Popup -->
+  <div id="popupModal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+    <div id="popupContent" style="background:#fff;color:#d7263d;padding:2.5rem 2rem 2rem 2rem;border-radius:2rem;box-shadow:0 8px 32px rgba(0,0,0,0.25);text-align:center;max-width:90vw;position:relative;animation:popIn 0.4s cubic-bezier(.68,-0.55,.27,1.55);">
+      <span id="popupEmoji" style="font-size:3rem;display:block;margin-bottom:1rem;"></span>
+      <span id="popupText" style="font-size:1.5rem;font-weight:bold;"></span>
+      <br>
+      <button id="closePopup" style="margin-top:2rem;padding:0.7rem 2.5rem;font-size:1.2rem;border:none;border-radius:1.5rem;background:#d7263d;color:#fff;font-weight:bold;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:background 0.2s;">Close</button>
+    </div>
+  </div>
+  <style>
+    @keyframes popIn {
+      0% { transform: scale(0.7); opacity: 0; }
+      80% { transform: scale(1.1); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #popupModal { display: flex; }
+    #popupModal[style*="display:none"] { display: none !important; }
+    #popupContent { animation: popIn 0.4s cubic-bezier(.68,-0.55,.27,1.55); }
+    #closePopup:active { background: #a81b2b; }
+  </style>
+  <script>
+    // Submit click count and response to Google Form
+    function submitToGoogleForm(clicks, response) {
+      document.getElementById('googleClicks').value = clicks;
+      document.getElementById('googleResponse').value = response;
+      document.getElementById('googleForm').submit();
+    }
+        // Show last result if available
+        const lastResultDiv = document.getElementById('lastResult');
+        function updateLastResultDisplay() {
+          const last = localStorage.getItem('valentine_last_clicks');
+          if (last !== null) {
+            lastResultDiv.textContent = `Last total left clicks to answer: ${last}`;
+          } else {
+            lastResultDiv.textContent = '';
+          }
+        }
+        updateLastResultDisplay();
+    let leftClickCount = 0;
+    const clickCounter = document.getElementById('clickCounter');
+
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const popupModal = document.getElementById('popupModal');
+    const popupText = document.getElementById('popupText');
+    const popupEmoji = document.getElementById('popupEmoji');
+    const closePopup = document.getElementById('closePopup');
+
+    // Set initial position for No button
+    function setNoBtnPosition() {
+      // Temporarily set to (0,0) to get correct size
+      noBtn.style.left = '0px';
+      noBtn.style.top = '0px';
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 10; // To avoid button going off screen
+      const maxLeft = Math.max(0, window.innerWidth - btnRect.width - padding);
+      const maxTop = Math.max(0, window.innerHeight - btnRect.height - padding);
+      const left = Math.random() * maxLeft;
+      const top = Math.random() * maxTop;
+      noBtn.style.left = left + 'px';
+      noBtn.style.top = top + 'px';
+    }
+
+    setNoBtnPosition();
+
+    // No button moves only on timer, not on hover or click
+
+    // Move No button every 10 seconds automatically
+    setInterval(setNoBtnPosition, 1000);
+
+    // Show custom popup
+    function showPopup(message, emoji) {
+      popupText.textContent = message;
+      popupEmoji.textContent = emoji;
+      popupModal.style.display = 'flex';
+    }
+
+    // Hide popup
+    closePopup.onclick = function() {
+      popupModal.style.display = 'none';
+    };
+
+
+    // Increment leftClickCount for every left click anywhere except Close button
+    document.addEventListener('click', function(e) {
+      if (e.button === 0 && e.target !== closePopup) {
+        leftClickCount++;
+        updateClickCounter();
+      }
+    });
+
+    // Show popup, submit to Google Form, and reset count on No button click
+    noBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      let triesMsg = `\nTotal left clicks: ${leftClickCount}`;
+      showPopup('You have chosen the wrong answer, you lose' + triesMsg, '💔');
+      submitToGoogleForm(leftClickCount, 'no');
+      localStorage.setItem('valentine_last_clicks', leftClickCount);
+      updateLastResultDisplay();
+      leftClickCount = 0;
+      updateClickCounter();
+    });
+
+    // Update the live click counter
+    function updateClickCounter() {
+      clickCounter.textContent = `Left clicks: ${leftClickCount}`;
+    }
+
+    // Yes button click
+    yesBtn.addEventListener('click', function() {
+      let triesMsg = `\nTotal left clicks: ${leftClickCount}`;
+      showPopup('You have chosen the right answer, you win!' + triesMsg, '🔥');
+      submitToGoogleForm(leftClickCount, 'yes');
+      localStorage.setItem('valentine_last_clicks', leftClickCount);
+      updateLastResultDisplay();
+      leftClickCount = 0;
+      updateClickCounter();
+    });
+  </script>
+</body>
+</html>
